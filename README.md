@@ -1,21 +1,4 @@
 # Aimodoki
 
-**TODO: Add description**
-
-## Installation
-
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `aimodoki` to your list of dependencies in `mix.exs`:
-
-```elixir
-def deps do
-  [
-    {:aimodoki, "~> 0.1.0"}
-  ]
-end
-```
-
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/aimodoki](https://hexdocs.pm/aimodoki).
-
+ Elixirを使った手書き数字認識を行うプログラムです。
+ 以下のQiitaに概要を説明しています。
