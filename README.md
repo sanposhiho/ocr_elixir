@@ -2,6 +2,7 @@
 
  Elixirを使った手書き数字認識を行うプログラムです。
  以下のQiitaに概要を説明しています。
+ 
 Elixirで作るニューラルネットワークを用いた手書き数字認識① 〜関数の準備編〜
 https://qiita.com/sanpo_shiho/items/457c02a0007406dc381d 
 
