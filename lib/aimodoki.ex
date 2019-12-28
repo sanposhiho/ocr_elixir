@@ -111,28 +111,14 @@ defmodule Aimodoki do
                     |> Enum.with_index()
                     |> Enum.map(fn {dedx, index} ->
                           dedx = 0
-                            #IO.puts("-----------------------------\n")
-                            #  IO.puts index
-                            #IO.puts("\n")
-                      #a=
                           a
                           |> Enum.with_index()
                           |> Enum.filter(fn {aa, indexx} -> rem(indexx, n) == index end)
                           |> Enum.map(fn {aa, indexx} ->
                             index_for_dedy = div(indexx, n)
-                            #IO.puts("\n")
-                            #IO.write(aa)
-                            #IO.write("*")
-                            #IO.write(Enum.at(dEdy, index_for_dedy)+0.9)
-
-                            #IO.puts aa * Enum.at(dEdy, index_for_dedy)
                             aa * Enum.at(dEdy, index_for_dedy)
                           end)
                           |> Enum.sum()
-                            #IO.puts("\n")
-                            #  IO.puts a
-                            #IO.puts("\n")
-                            #  a
                       end)
                     |> Enum.chunk_every(1)
                   end)
