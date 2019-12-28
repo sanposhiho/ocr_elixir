@@ -67,7 +67,7 @@ defmodule Aimodoki do
 
     [0,0,0,0,0,0,0,0,0,0]
       |> Enum.with_index(0)
-      |> Enum.map(fn {ans, index} -> if index == t, do: {index-1, 1}, else: {index-1, 0} end)
+      |> Enum.map(fn {ans, index} -> if index == t, do: {1, index}, else: {0, index} end)
       |> Enum.map(fn {ans, index} ->
             Enum.at(y, index) - ans
           end)
@@ -88,6 +88,7 @@ defmodule Aimodoki do
     dEdb = dEdy
     a = a |> List.flatten()
     dEdy = dEdy |> List.flatten()
+    dEdx = dEdx |> List.flatten()
     x = x |> List.flatten()
     dEda =
       Task.async(fn ->
@@ -109,11 +110,29 @@ defmodule Aimodoki do
                     dEdx
                     |> Enum.with_index()
                     |> Enum.map(fn {dedx, index} ->
+                          dedx = 0
+                            #IO.puts("-----------------------------\n")
+                            #  IO.puts index
+                            #IO.puts("\n")
+                      #a=
                           a
                           |> Enum.with_index()
-                          |> Enum.take_while(fn {aa, indexx} -> rem(indexx, n) == index end)
-                          |> Enum.map(fn {aa, indexx} -> aa * Enum.at(dEdy, index)  end)
+                          |> Enum.filter(fn {aa, indexx} -> rem(indexx, n) == index end)
+                          |> Enum.map(fn {aa, indexx} ->
+                            index_for_dedy = div(indexx, n)
+                            #IO.puts("\n")
+                            #IO.write(aa)
+                            #IO.write("*")
+                            #IO.write(Enum.at(dEdy, index_for_dedy)+0.9)
+
+                            #IO.puts aa * Enum.at(dEdy, index_for_dedy)
+                            aa * Enum.at(dEdy, index_for_dedy)
+                          end)
                           |> Enum.sum()
+                            #IO.puts("\n")
+                            #  IO.puts a
+                            #IO.puts("\n")
+                            #  a
                       end)
                     |> Enum.chunk_every(1)
                   end)
@@ -143,23 +162,15 @@ defmodule Aimodoki do
   # maxのindexを返す
   def inference6(a1, a2, a3, b1, b2, b3, x) do
     y1 = fc(50, 784, x, a1, b1)  |> relu(50)
-    IO.inspect y1
-    y2 = fc(100, 50, y1, a2, b2)
-    IO.inspect y2
-    y2 = y2 |> relu(100)
-    IO.inspect y2
-    y =  fc(10, 100, y2, a3, b3)
-    IO.inspect y #ソート済み
-     y=    y|> softmax(10)
+    y2 = fc(100, 50, y1, a2, b2) |> relu(100)
+    y =  fc(10, 100, y2, a3, b3) |> softmax(10)
 
-    IO.inspect y
-    y = y
+    y
     |> List.flatten()
     |> Enum.with_index()
     |> Enum.sort_by(&(elem(&1, 0)), &>=/2)
     |> Enum.at(0)
-    IO.inspect y
-    elem(y, 1)
+    |> elem(1)
   end
 
   #何を返すかは謎 yを減らした
@@ -173,9 +184,6 @@ defmodule Aimodoki do
     y0         = Matrix.new(784, 1)
     y1         = Matrix.new(50, 1)
     y2         = Matrix.new(100, 1)
-  IO.inspect y
-  IO.inspect copy_relu1
-  IO.inspect copy_fc2
 
     y3 = softmaxwithloss_bwd(10, y, t)
     {deda3, dedb3, y2} = fc_bwd(10, 100, copy_fc3, y3, a3, deda3, y2)
@@ -192,7 +200,6 @@ defmodule Aimodoki do
     batch = 100
     h = 0.01
 
-     batch = 2
     deda1 = Matrix.new(50, 784)
     deda2 = Matrix.new(100, 50)
     deda3 = Matrix.new(10, 100)
@@ -206,12 +213,6 @@ defmodule Aimodoki do
     b1 = rand_init(50, 1)
     b2 = rand_init(100, 1)
     b3 = rand_init(10, 1)
-    a1 = Matrix.new(50, 784, 3)
-    a2 = Matrix.new(100, 50, 3)
-    a3 = Matrix.new(10, 100, 3)
-    b1 = Matrix.new(50, 1, 3)
-    b2 = Matrix.new(100, 1, 3)
-    b3 = Matrix.new(10, 1, 3)
 
     index = 0..train_count-1
 
@@ -230,7 +231,6 @@ defmodule Aimodoki do
         index = shuffle(index)
         #train_count/batchは割り切れると仮定
         j = round(train_count/batch)-1
-        j = 1
         learn_batch(a1, a2, a3, b1, b2, b3, deda1, deda2, deda3, dedb1, dedb2, dedb3,  train_x, train_y, index, batch, j)
 
       ii ->
@@ -300,7 +300,7 @@ defmodule Aimodoki do
            IO.puts("\n")
            {a1, a2, a3, b1, b2, b3}
          n ->
-           task = Task.async(Aimodoki, :backward6, [a1, a2, a3, b1, b2, b3, Enum.at(train_x, 1) ,Enum.at(train_y, 1),  deda1, deda2, deda3, dedb1, dedb2, dedb3])
+           task = Task.async(Aimodoki, :backward6, [a1, a2, a3, b1, b2, b3, Enum.at(train_x, Enum.at(index, j*batch+n)) ,Enum.at(train_y, Enum.at(index, j*batch+n)),  deda1, deda2, deda3, dedb1, dedb2, dedb3])
           tasks_list = tasks_list ++ [task]
            IO.write "."
           cal_gradient(a1, a2, a3, b1, b2, b3, deda1, deda2, deda3, dedb1, dedb2, dedb3, deda1_av, deda2_av, deda3_av, dedb1_av, dedb2_av, dedb3_av, train_x, train_y, index, batch, j, n-1, tasks_list)
@@ -377,6 +377,7 @@ defmodule Aimodoki do
     if is_learn_mode?(args) do
       IO.puts "------ learn mode ------"
       train_count = 2000
+      IO.puts "loading images ..."
       train_x = MNIST.train_image(train_count)
       train_y = MNIST.train_label(train_count)
       {a1, a2, a3, b1, b2, b3} = learn_6layers(train_count, train_x, train_y)
@@ -388,16 +389,13 @@ defmodule Aimodoki do
     else
       IO.puts "------ inference mode ------"
       {a1, a2, a3, b1, b2, b3} = load_file()
-      test_x = MNIST.train_image(1) |> Enum.at(0)
-      test_y = MNIST.train_label(1)
+      #とりあえずtest_imageを渡す
+      test_x = MNIST.test_image(1) |> Enum.at(0)
+      test_y = MNIST.test_label(1)
       inference_number = inference6(a1, a2, a3, b1, b2, b3, test_x)
       IO.puts "The number is #{inference_number}, I think!"
       IO.puts "(The currect number is #{Enum.at(test_y, 0)}.)"
       IO.puts "== end =="
-      #test_count = 100
-      #test_x = MNIST.test_image(test_count)
-      #test_y = MNIST.test_label(test_count)
-      #test_inference(a1, a2, a3, b1, b2, b3, test_x, test_y, test_count)
     end
   end
 end
