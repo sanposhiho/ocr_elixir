@@ -182,7 +182,7 @@ defmodule Aimodoki do
   end
 
   def learn_6layers(train_count, train_x, train_y) do
-    epoch = 1
+    epoch = 10
     batch = 100
     h = 0.01
 
@@ -362,7 +362,7 @@ defmodule Aimodoki do
   def main(args \\ []) do
     if is_learn_mode?(args) do
       IO.puts "------ learn mode ------"
-      train_count = 2000
+      train_count = 60000
       IO.puts "loading images ..."
       train_x = MNIST.train_image(train_count)
       train_y = MNIST.train_label(train_count)
