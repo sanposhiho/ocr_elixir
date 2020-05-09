@@ -9,7 +9,14 @@ https://qiita.com/sanpo_shiho/items/457c02a0007406dc381d
 Elixirで作るニューラルネットワークを用いた手書き数字認識② 〜完成編〜
 https://qiita.com/sanpo_shiho/items/18d56e44fb37a3969900
 
-# 実行
+# Get started
+
+Elixir 1.4系での動作を確認しています。
+以下の公式ページを参考にElixirをinstallしてください。
+
+[Elixir をインストール](https://elixir-lang.jp/install.html)
+
+# example
 
 ビルド後に実行してください。
 また、学習モードを一度も実行したことのない状態で推論モードは実行できません。
